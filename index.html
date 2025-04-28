@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Succinct Testnet Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #6a0572; /* Fallback color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            position: relative;
+        }
+        .container {
+            background: linear-gradient(145deg, #ffffff, #ffe6f0);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border: 2px solid #fe11c5;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            margin: 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        button.option {
+            background-color: #fe11c5;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        button.option:hover {
+            background-color: #d80ea6;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        button.option.correct {
+            background-color: #27ae60;
+            transform: scale(1);
+            box-shadow: none;
+        }
+        button.option.wrong {
+            background-color: #e74c3c;
+            transform: scale(1);
+            box-shadow: none;
+        }
+        button.option:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        #result.perfect {
+            color: #27ae60;
+        }
+        #result.good {
+            color: #e67e22;
+        }
+        #result.low {
+            color: #e74c3c;
+        }
+        #badge {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #fe11c5;
+            border-radius: 10px;
+        }
+        #share-prompt {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        #download-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #fe11c5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        #download-badge:hover {
+            background-color: #d80ea6;
+        }
+        .hidden {
+            display: none;
+        }
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            z-index: 0;
+        }
+        .watermark a {
+            color: #fe11c5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .watermark a:hover {
+            color: #d80ea6;
+        }
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .question {
+                font-size: 18px;
+            }
+            button.option {
+                padding: 10px;
+                font-size: 14px;
+            }
+            #result {
+                font-size: 18px;
+            }
+            #share-prompt {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">Created by <a href="https://x.com/hi_ranking" target="_blank">@hi_ranking</a></div>
+    <div class="container">
+        <h1>Succinct Testnet Quiz: Prove Your Knowledge!</h1>
+        <div id="quiz">
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options"></div>
+        </div>
+        <div id="result" class="hidden"></div>
+        <img id="badge" class="hidden" src="badge.png" alt="Succinct Badge">
+        <div id="share-prompt" class="hidden"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What does a prover do in a zero-knowledge proof (ZKP) system?",
+                options: [
+                    "Reveals all data to verify a transaction",
+                    "Generates a proof that a statement is true without revealing details",
+                    "Stores private keys for users",
+                    "Encrypts the blockchain"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is Succinct’s main mission?",
+                options: [
+                    "To build a centralized blockchain",
+                    "To create a new cryptocurrency",
+                    "To scale decentralized apps using zero-knowledge proofs",
+                    "To replace traditional databases"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is a key benefit of zero-knowledge proofs?",
+                options: [
+                    "They make transactions slower",
+                    "They increase data storage needs",
+                    "They eliminate the need for blockchains",
+                    "They allow privacy-preserving verification"
+                ],
+                correct: 3
+            },
+            {
+                question: "What is the name of Succinct’s Testnet program?",
+                options: [
+                    "Proof of Stake",
+                    "Crisis of Trust",
+                    "Blockchain Revolution",
+                    "ZK Master"
+                ],
+                correct: 1
+            },
+            {
+                question: "How does Succinct’s prover network help blockchains?",
+                options: [
+                    "By enabling fast, secure, and decentralized proof generation",
+                    "By storing all transaction data publicly",
+                    "By removing the need for smart contracts",
+                    "By centralizing verification"
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionText = document.getElementById('question-text');
+        const optionsDiv = document.getElementById('options');
+        const resultDiv = document.getElementById('result');
+        const badgeImg = document.getElementById('badge');
+        const sharePrompt = document.getElementById('share-prompt');
+        const downloadBadge = document.createElement('a');
+        downloadBadge.id = 'download-badge';
+        downloadBadge.textContent = 'Download Badge';
+        downloadBadge.href = 'badge.png';
+        downloadBadge.download = 'Succinct_ZK_Badge.png';
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionText.textContent = q.question;
+            optionsDiv.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index, button);
+                optionsDiv.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected, button) {
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.option');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selected === q.correct) {
+                button.classList.add('correct');
+                score++;
+            } else {
+                button.classList.add('wrong');
+                buttons[q.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function showResult() {
+            document.getElementById('quiz').className = 'hidden';
+            resultDiv.className = score === 5 ? 'perfect' : score >= 3 ? 'good' : 'low';
+            resultDiv.textContent = `You scored ${score} out of ${questions.length}!`;
+            badgeImg.className = '';
+            sharePrompt.className = '';
+
+            let shareText = '';
+            if (score === 5) {
+                shareText = `I aced Succinct's Testnet Quiz by @hi_ranking! Perfect score! @SuccinctLabs, I'm ready for the Crisis of Trust Testnet! 🚀 #SuccinctTestnet`;
+            } else if (score >= 3) {
+                shareText = `I scored ${score}/5 on Succinct's Testnet Quiz by @hi_ranking! Solid effort! @SuccinctLabs, I'm ready for the Crisis of Trust Testnet! 🚀 #SuccinctTestnet`;
+            } else {
+                shareText = `I tried Succinct's Testnet Quiz by @hi_ranking and scored ${score}/5. Ready to learn more! @SuccinctLabs, let's join the Crisis of Trust Testnet! 🚀 #SuccinctTestnet`;
+            }
+            sharePrompt.innerHTML = `Congrats! Share your result on X: <br>${shareText}<br>`;
+            sharePrompt.appendChild(downloadBadge);
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
